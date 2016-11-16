@@ -43,11 +43,34 @@ class RenderFunction extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('renderSass', array($this, 'renderSass'), array('needs_context' => true, 'needs_environment' => true,'is_safe' => array('html'))),
+            new \Twig_SimpleFunction('renderSass', array($this, 'renderSassTemplate'), array('needs_context' => true, 'needs_environment' => true,'is_safe' => array('html'))),
         );
     }
 
-    public function renderSass(\Twig_Environment $twig,$context, $template) {
+    public function getFilters()
+    {
+        return array(
+            new \Twig_SimpleFilter('renderSass',array($this, 'renderSaasFilter'), array('is_safe' => array('html'))),
+        );
+    }
+
+    public function renderSaasFilter($content) {
+        $cacheKey = "sass_inline_" . sha1($content);
+        $cacheItem = $this->cachePool->getItem($cacheKey);
+        if ($cacheItem->isHit())
+            return $cacheItem->get();
+
+        $sass = $this->compiler->compile($content);
+
+        // Save the rendered sass file to cache
+        $cacheItem->set($sass);
+        $this->cachePool->save($cacheItem);
+
+        // serve the file
+        return $sass;
+    }
+
+    public function renderSassTemplate(\Twig_Environment $twig,$context, $template) {
 
         // Render twig file
         // TODO: Does TWIG cache this?!
