@@ -15,21 +15,21 @@ use Psr\Cache\CacheItemPoolInterface;
 class RenderFunction extends \Twig_Extension
 {
     private $compiler;
-    private $cache;
+    private $cachePool;
 
     /**
      * RenderFunction constructor.
      * @param Compiler $compiler
+     * @param CacheItemPoolInterface $cachePool
      * @param $importRootDir
      * @param string $sasFormater Leafo\ScssPhp\Formatter\Expanded | Leafo\ScssPhp\Formatter\Nested (default) | Leafo\ScssPhp\Formatter\Compressed | Leafo\ScssPhp\Formatter\Compact | Leafo\ScssPhp\Formatter\Crunched
-     * @param CacheItemPoolInterface $cache
      */
-    public function __construct(Compiler $compiler, $importRootDir = null, $sasFormater = 'Leafo\ScssPhp\Formatter\Nested',CacheItemPoolInterface $cache = null)
+    public function __construct(Compiler $compiler,CacheItemPoolInterface $cachePool, $importRootDir = null, $sasFormater = 'Leafo\ScssPhp\Formatter\Nested')
     {
         $this->compiler = $compiler;
         $this->compiler->addImportPath($importRootDir);
         $this->compiler->setFormatter($sasFormater);
-        $this->cache = $cache;
+        $this->cachePool = $cachePool;
     }
 
 
@@ -41,25 +41,24 @@ class RenderFunction extends \Twig_Extension
     }
 
     public function renderSass(\Twig_Environment $twig,$context, $template) {
-        // Check if it is already in cache
-        if ($this->cache) {
-            $cacheKey = $template . sha1(json_encode($context));
-            $item = $this->cache->getItem($cacheKey);
-            if ($sass = $item->get())
-                return $sass;
-        }
 
         // Render twig file
+        // TODO: Does TWIG cache this?!
         $renderedFile = $twig->render($template,$context);
+
+
+        // Check if SASS is already in cache
+        $cacheKey = $template . "_" . sha1($renderedFile);
+        $cacheItem = $this->cachePool->getItem($cacheKey);
+        if ($cacheItem->isHit())
+            return $cacheItem->getKey();
 
         // Render sass
         $sass = $this->compiler->compile($renderedFile);
 
-        // save to catche
-        if ($this->cache) {
-            $item->set($sass);
-            $this->cache->save($item);
-        }
+        // Save the rendered sass file to cache
+        $cacheItem->set($sass);
+        $this->cachePool->save($cacheItem);
 
         // serve the file
         return $sass;
