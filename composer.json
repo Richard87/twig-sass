@@ -3,7 +3,7 @@
     "description": "A Twig extension/function to render inline SASS files for SEO purposes or to render CSS files with easy customizability",
     "type": "library",
     "license": "MIT",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "keywords": ["sass","twig"],
     "authors": [
         {

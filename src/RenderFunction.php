@@ -39,7 +39,7 @@ class RenderFunction extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFunction('renderSass', array($this, 'renderSass'), array('needs_context' => true, 'needs_environment' => true, 'is_safe' => true)),
+            new \Twig_SimpleFunction('renderSass', array($this, 'renderSass'), array('needs_context' => true, 'needs_environment' => true)),
         );
     }
 
@@ -69,6 +69,6 @@ class RenderFunction extends \Twig_Extension
 
     public function getName()
     {
-        return 'richard87_twig_sass_renderer';
+        return 'renderSass';
     }
 }
