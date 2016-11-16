@@ -22,17 +22,17 @@ class RenderFunction extends \Twig_Extension
      * @param Compiler $compiler
      * @param CacheItemPoolInterface $cachePool
      * @param $importRootDir
-     * @param string $sasFormater     Leafo\ScssPhp\Formatter\Expanded
+     * @param string $sassFormatter   Leafo\ScssPhp\Formatter\Expanded
      *                              | Leafo\ScssPhp\Formatter\Nested
      *                              | Leafo\ScssPhp\Formatter\Compressed
      *                              | Leafo\ScssPhp\Formatter\Compact
      *                              | Leafo\ScssPhp\Formatter\Crunched
      */
-    public function __construct(Compiler $compiler,CacheItemPoolInterface $cachePool, $importRootDir = null, $sasFormater = 'Leafo\ScssPhp\Formatter\Crunched')
+    public function __construct(Compiler $compiler, CacheItemPoolInterface $cachePool, $importRootDir = null, $sassFormatter = 'Leafo\ScssPhp\Formatter\Crunched')
     {
         $this->compiler = $compiler;
         $this->compiler->addImportPath($importRootDir);
-        $this->compiler->setFormatter($sasFormater);
+        $this->compiler->setFormatter($sassFormatter);
         $this->cachePool = $cachePool;
     }
 
