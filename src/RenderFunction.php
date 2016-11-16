@@ -55,7 +55,7 @@ class RenderFunction extends \Twig_Extension
 
 
         // Check if SASS is already in cache
-        $cacheKey = $template . "_" . sha1($renderedFile);
+        $cacheKey = $this->removeIllegalCharacters($template)  . "_" . sha1($renderedFile);
         $cacheItem = $this->cachePool->getItem($cacheKey);
         if ($cacheItem->isHit())
             return $cacheItem->getKey();
@@ -74,5 +74,19 @@ class RenderFunction extends \Twig_Extension
     public function getName()
     {
         return 'richard87_twig_sass_render_sass';
+    }
+
+    /**
+     * @param $template
+     * @return mixed
+     * TODO: FIX THIS!!
+     */
+    private function removeIllegalCharacters($template)
+    {
+        $illigalChars = "{,},(,),/,\\,@,:";
+        foreach (explode(",",$illigalChars) as $char)
+            $template = str_replace($char,"_",$template);
+
+        return $template;
     }
 }
