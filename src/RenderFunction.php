@@ -22,9 +22,13 @@ class RenderFunction extends \Twig_Extension
      * @param Compiler $compiler
      * @param CacheItemPoolInterface $cachePool
      * @param $importRootDir
-     * @param string $sasFormater Leafo\ScssPhp\Formatter\Expanded | Leafo\ScssPhp\Formatter\Nested (default) | Leafo\ScssPhp\Formatter\Compressed | Leafo\ScssPhp\Formatter\Compact | Leafo\ScssPhp\Formatter\Crunched
+     * @param string $sasFormater     Leafo\ScssPhp\Formatter\Expanded
+     *                              | Leafo\ScssPhp\Formatter\Nested
+     *                              | Leafo\ScssPhp\Formatter\Compressed
+     *                              | Leafo\ScssPhp\Formatter\Compact
+     *                              | Leafo\ScssPhp\Formatter\Crunched
      */
-    public function __construct(Compiler $compiler,CacheItemPoolInterface $cachePool, $importRootDir = null, $sasFormater = 'Leafo\ScssPhp\Formatter\Nested')
+    public function __construct(Compiler $compiler,CacheItemPoolInterface $cachePool, $importRootDir = null, $sasFormater = 'Leafo\ScssPhp\Formatter\Crunched')
     {
         $this->compiler = $compiler;
         $this->compiler->addImportPath($importRootDir);
@@ -36,10 +40,10 @@ class RenderFunction extends \Twig_Extension
     /**
      * @return \Twig_SimpleFunction[]
      */
-    public function getFilters()
+    public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('renderSass', array($this, 'renderSass'), array('needs_context' => true, 'needs_environment' => true)),
+            new \Twig_SimpleFunction('renderSass', array($this, 'renderSass'), array('needs_context' => true, 'needs_environment' => true,'is_safe' => array('html'))),
         );
     }
 
@@ -69,6 +73,6 @@ class RenderFunction extends \Twig_Extension
 
     public function getName()
     {
-        return 'renderSass';
+        return 'richard87_twig_sass_render_sass';
     }
 }
