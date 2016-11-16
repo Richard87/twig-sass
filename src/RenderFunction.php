@@ -33,6 +33,9 @@ class RenderFunction extends \Twig_Extension
     }
 
 
+    /**
+     * @return \Twig_SimpleFunction[]
+     */
     public function getFilters()
     {
         return array(
@@ -66,6 +69,6 @@ class RenderFunction extends \Twig_Extension
 
     public function getName()
     {
-        return 'twig_sass_renderer';
+        return 'richard87_twig_sass_renderer';
     }
 }
