@@ -35,6 +35,7 @@ composer.phar
 ## File-based project format:
 *.iws
 /test
+/test/*
 ## Plugin-specific files:
 
 # IntelliJ

@@ -58,7 +58,7 @@ class RenderFunction extends \Twig_Extension
         $cacheKey = $this->removeIllegalCharacters($template)  . "_" . sha1($renderedFile);
         $cacheItem = $this->cachePool->getItem($cacheKey);
         if ($cacheItem->isHit())
-            return $cacheItem->getKey();
+            return $cacheItem->get();
 
         // Render sass
         $sass = $this->compiler->compile($renderedFile);
