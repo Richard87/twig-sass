@@ -24,7 +24,7 @@ class RenderFunction extends \Twig_Extension
      * @param string $sasFormater Leafo\ScssPhp\Formatter\Expanded | Leafo\ScssPhp\Formatter\Nested (default) | Leafo\ScssPhp\Formatter\Compressed | Leafo\ScssPhp\Formatter\Compact | Leafo\ScssPhp\Formatter\Crunched
      * @param CacheItemPoolInterface $cache
      */
-    public function __construct(Compiler $compiler, $importRootDir = null, $sasFormater = 'Leafo\ScssPhp\Formatter\Nested',CacheItemPoolInterface $cache)
+    public function __construct(Compiler $compiler, $importRootDir = null, $sasFormater = 'Leafo\ScssPhp\Formatter\Nested',CacheItemPoolInterface $cache = null)
     {
         $this->compiler = $compiler;
         $this->compiler->addImportPath($importRootDir);
@@ -42,10 +42,12 @@ class RenderFunction extends \Twig_Extension
 
     public function renderSass(\Twig_Environment $twig,$context, $template) {
         // Check if it is already in cache
-        $cacheKey = $template . sha1(json_encode($context));
-        $item = $this->cache->getItem($cacheKey);
-        if ($sass = $item->get())
-            return $sass;
+        if ($this->cache) {
+            $cacheKey = $template . sha1(json_encode($context));
+            $item = $this->cache->getItem($cacheKey);
+            if ($sass = $item->get())
+                return $sass;
+        }
 
         // Render twig file
         $renderedFile = $twig->render($template,$context);
@@ -54,8 +56,10 @@ class RenderFunction extends \Twig_Extension
         $sass = $this->compiler->compile($renderedFile);
 
         // save to catche
-        $item->set($sass);
-        $this->cache->save($item);
+        if ($this->cache) {
+            $item->set($sass);
+            $this->cache->save($item);
+        }
 
         // serve the file
         return $sass;
