@@ -54,3 +54,14 @@ styles.scss.twig:
     @import "node_modules/bootstrap/scss/bootstrap";
     
 Notice that `node_modules` is inside the web directory, but that can be easily changed with the `importRootDir` variable.
+
+You can also use the included renderSass filter like this:
+
+    <style>
+        {{ '$brand-primary: #59cc4a;@import "node_modules/bootstrap/scss/bootstrap";'|renderSass }}
+    </style>
+    
+## TODO
+
+ - Create a Symfony hook that automatically renders `*.scss.twig` templates
+ - Write tests
